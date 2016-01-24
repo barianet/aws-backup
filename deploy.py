@@ -73,7 +73,7 @@ if ebs_role_arn is None:
 
 #This sleep is required as AWS does not like creating the lamdba function too quickly after the role is created.
 #Without this we get: "The role defined for the function cannot be assumed by Lambda."
-time.sleep(3)
+time.sleep(5)
 
 #Build the zip file
 try:
