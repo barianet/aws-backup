@@ -1,9 +1,5 @@
 __author__ = 'turnerj'
 
-# Backup mechanism driven by metadata tags on EBS volumes
-# Tag format: Key=backup ; Value=<backup resolution value><backup resolution unit H|d>-<time of day backup windows start 24 hour format>-<time of day backup windows end 24 hour format>-<max number of backups to retain>
-# Eg: 1H-08:00-18:00-10 (take hourly backups between 8am and 6pm and retain 10 backups)
-# Eg: 1d-18:00-23:00-7 (take a daily backup between 18:00 and 23:00 (end time redundant in this case) and keep 7 backups
 
 import boto3
 import datetime
@@ -17,9 +13,6 @@ logger.setLevel(logging.INFO)
 ec2 = boto3.client('ec2')
 
 def ebs_backup_handler(event, context):
-#def ebs_backup_handler():
-    #global ec2
-    #ec2 = boto3.client('ec2', region_name='us-east-1')
     response = ec2.describe_volumes(Filters=[{'Name': 'tag-key', 'Values': ['backup', 'Backup']},])
     logger.info("Number of volumes with backup tag: %d" % (len(response['Volumes'])))
     for volume in response['Volumes']:
@@ -80,8 +73,8 @@ def eval_backup_tag(volumeId, parsed_tag_dict):
             #Sort list of snapshots by time it was made - 1st element is the newest
             snapshots_time_sorted = sorted(response['Snapshots'], key=lambda v: v['StartTime'], reverse=True)
             newest_snapshot_utctime = snapshots_time_sorted[0]['StartTime']
-            # For some odd reason the method utcnow does not set the tz to utc!.
-            # In order to be able to compare we have to remove the timezone of the response from AWS which returns utc.
+            # For some odd reason the method utcnow does not set the tz property to utc!.
+            # In order to be able to compare we have to remove the timezone property of the response from AWS which returns utc.
             newest_snapshot_utctime = newest_snapshot_utctime.replace(tzinfo=None)
 
             now_utc_time = datetime.datetime.utcnow()

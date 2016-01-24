@@ -26,5 +26,5 @@ Examples:
 2. With the current working directory set to the directory of the deploy.py file, run the deploy.py file
 
 ## Work to be done
-* Does not yet set up the hourly event to trigger the backup run
+* deploy.py oes not yet set up the hourly event to trigger the backup run. It appears this cannot be done via API: http://docs.aws.amazon.com/lambda/latest/dg/with-scheduled-events.html
 
