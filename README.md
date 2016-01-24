@@ -1,6 +1,6 @@
 # aws-backup
 
-AWS Lambda based backup solution. Backup is achieved through taking snapshots of EBS volumes which have a particular tag set against them.
+AWS Lambda based backup solution. Backup is achieved through taking snapshots of EBS volumes which have a particular tag set against them. Therefore to turn on backups just set this tag against the EBS volume.
 
 Features:
 * Control when in the day backups are taken
