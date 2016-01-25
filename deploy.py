@@ -1,5 +1,3 @@
-__author__ = 'turnerj'
-
 import boto3
 import zipfile
 import os
@@ -72,11 +70,11 @@ if ebs_role_arn is None:
         RoleName=role_name,
         PolicyArn=ebs_policy_arn)
 
-#This sleep is required as AWS does not like creating the lamdba function too quickly after the role is created.
-#Without this we get: "The role defined for the function cannot be assumed by Lambda."
+# This sleep is required as AWS does not like creating the lamdba function too quickly after the role is created.
+# Without this we get: "The role defined for the function cannot be assumed by Lambda."
 time.sleep(5)
 
-#Build the zip file
+# Build the zip file
 try:
     os.remove('built-lambda.zip')
 except OSError:
@@ -85,8 +83,8 @@ zipfh = zipfile.ZipFile('built-lambda.zip', 'w')
 oldcwd = os.getcwd()
 os.chdir(function_src_dir)
 for root, dirs, files in os.walk('.'):
-    for file in files:
-        zipfh.write(os.path.join(root, file))
+    for f in files:
+        zipfh.write(os.path.join(root, f))
 zipfh.close()
 os.chdir(oldcwd)
 
@@ -132,7 +130,7 @@ for log_group in response['logGroups']:
     if log_group['logGroupName'] == log_group_name:
         log_group_arn = log_group['arn']
         break
-if log_group_arn == None:
+if log_group_arn is None:
     response = logs.create_log_group(logGroupName=log_group_name)
 response = logs.put_retention_policy(
     logGroupName=log_group_name,
