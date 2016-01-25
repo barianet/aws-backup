@@ -14,6 +14,7 @@ policy_src = 'ebs-backup-iam-policy.json'
 role_name = 'EBS-Backup-Lambda'
 role_src = 'ebs-backup-iam-role-trust-policy.json'
 function_name = 'EBS-Backup'
+log_group_name = '/aws/lambda/' + function_name
 function_src_dir = 'ebs-backup-lambda'
 handler = 'ebs-backup.ebs_backup_handler'
 timeout = 60
@@ -123,3 +124,17 @@ if function_arn is None:
             Timeout=timeout,
             MemorySize=memory_size,
             Publish=True)
+
+logs = boto3.client('logs')
+log_group_arn = None
+response = logs.describe_log_groups(logGroupNamePrefix=log_group_name)
+for log_group in response['logGroups']:
+    if log_group['logGroupName'] == log_group_name:
+        log_group_arn = log_group['arn']
+        break
+if log_group_arn == None:
+    response = logs.create_log_group(logGroupName=log_group_name)
+response = logs.put_retention_policy(
+    logGroupName=log_group_name,
+    retentionInDays=14
+)
