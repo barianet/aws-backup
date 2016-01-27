@@ -83,10 +83,13 @@ def eval_backup_tag(volume_id, parsed_tag_dict):
             now_utc_time = datetime.datetime.utcnow()
             backup_resolution_unit = parsed_tag_dict['backup_resolution_unit']
             backup_resolution_value = parsed_tag_dict['backup_resolution_value']
+            # The 30 min period added to the max age can be thought of as a rounding up to the nearest hour.
             if backup_resolution_unit == "H":
-                max_age_previous_backup = now_utc_time - datetime.timedelta(hours=backup_resolution_value)
+                max_age_previous_backup = now_utc_time - datetime.timedelta(hours=backup_resolution_value) + \
+                                          datetime.timedelta(minutes=30)
             elif backup_resolution_unit == "d":
-                max_age_previous_backup = now_utc_time - datetime.timedelta(days=backup_resolution_value)
+                max_age_previous_backup = now_utc_time - datetime.timedelta(days=backup_resolution_value) + \
+                                          datetime.timedelta(minutes=30)
             else:
                 # Should never get to this point as tag format has been previously validated"
                 logger.error("Invalid unit of backup resolution in tag on volume %s" % volume_id)
